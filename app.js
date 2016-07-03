@@ -1,15 +1,21 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose')
-var config = require('./config')
+const express = require('express'),
+		bodyParser = require('body-parser'),
+		mongoose = require('mongoose'),
+		config = require('./config'),
+		loadRoutes = require('./routes'),
+		path = require('path')
 
-var app = express();
+const app = express();
+
+// setup ejs templating
+app.use(express.static(path.join(__dirname, 'public')))
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'pug')
 
 // configure middleware
 app.use(bodyParser.json()) // parses json bodies
 
-// load routes
-app.use('/person', require('./routes/person')());
+loadRoutes(app)
 
 // when app closes, let mongoose gracefully disconnect
 var gracefulDBExit = function() {
